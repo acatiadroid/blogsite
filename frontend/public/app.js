@@ -394,9 +394,14 @@ class Blog {
 
     async handleAddComment(event, postId) {
         event.preventDefault();
-        const author = document.getElementById('comment-author').value;
-        const email = document.getElementById('comment-email').value;
-        const content = document.getElementById('comment-content').value;
+        const author = document.getElementById('comment-author').value.trim();
+        const email = document.getElementById('comment-email').value.trim();
+        const content = document.getElementById('comment-content').value.trim();
+
+        if (!author || !email || !content) {
+            alert('Please fill in all fields');
+            return;
+        }
 
         try {
             const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
@@ -406,10 +411,20 @@ class Blog {
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Comment failed');
+            if (!response.ok) {
+                throw new Error(data.error || data.errors?.[0]?.msg || 'Comment failed');
+            }
 
+            // Clear form and reload post
+            document.getElementById('comment-author').value = '';
+            document.getElementById('comment-email').value = '';
+            document.getElementById('comment-content').value = '';
+            
+            // Reload the post to show the new comment
+            const pageContent = await this.renderPostDetail(postId);
+            document.getElementById('page-content').innerHTML = pageContent;
+            
             alert('Comment posted successfully!');
-            location.reload();
         } catch (error) {
             alert('Error posting comment: ' + error.message);
         }
