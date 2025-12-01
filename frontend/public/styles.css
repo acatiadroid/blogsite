@@ -1,0 +1,546 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #1a1a1a;
+    --secondary-color: #666;
+    --accent-color: #8b7355;
+    --border-color: #e8e8e8;
+    --bg-light: #fafaf8;
+    --text-color: #333;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Georgia', 'Garamond', 'Times New Roman', serif;
+    background: var(--bg-light);
+    color: var(--text-color);
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
+}
+
+header {
+    background: white;
+    border-bottom: 2px solid var(--border-color);
+    padding: 50px 40px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--primary-color);
+    font-style: italic;
+}
+
+header nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header button {
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 22px;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 2px;
+}
+
+header button:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-hover);
+}
+
+.content {
+    padding: 0 40px 60px 40px;
+    min-height: 500px;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    color: var(--primary-color);
+}
+
+h3 {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 28px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    font-family: 'Georgia', serif;
+    font-size: 15px;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    border-radius: 3px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    background: white;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 220px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+button.primary {
+    background: var(--accent-color);
+    color: white;
+    padding: 13px 32px;
+    border: 1px solid var(--accent-color);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Georgia', serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border-radius: 3px;
+}
+
+button.primary:hover {
+    background: white;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-hover);
+}
+
+.error {
+    background: #fff5f5;
+    color: #c33;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    border-left: 4px solid #c33;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 2px;
+}
+
+.success {
+    background: #f0fff4;
+    color: #2d7a3c;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    border-left: 4px solid #2d7a3c;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 2px;
+}
+
+.posts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.post-card {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 0 30px 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.post-card:hover {
+    border-bottom-color: var(--primary-color);
+}
+
+.post-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.post-card .meta {
+    color: var(--secondary-color);
+    font-size: 12px;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.post-card .excerpt {
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+    font-style: italic;
+    color: #666;
+}
+
+.post-card .stats {
+    display: flex;
+    gap: 24px;
+    padding-top: 15px;
+    color: var(--secondary-color);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border-color);
+}
+
+.post-detail {
+    background: white;
+}
+
+.post-detail h2 {
+    color: var(--primary-color);
+    margin-bottom: 16px;
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 400;
+}
+
+.post-detail .meta {
+    color: var(--secondary-color);
+    font-size: 13px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.post-content {
+    color: var(--text-color);
+    line-height: 1.9;
+    margin: 40px 0;
+    font-size: 15px;
+}
+
+.post-content h1, .post-content h2, .post-content h3 {
+    color: var(--primary-color);
+    margin-top: 32px;
+    margin-bottom: 16px;
+    font-weight: 400;
+}
+
+.post-content h1 {
+    font-size: 28px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.post-content h2 {
+    font-size: 22px;
+}
+
+.post-content h3 {
+    font-size: 18px;
+    font-style: italic;
+}
+
+.post-content p {
+    margin-bottom: 18px;
+}
+
+.post-content ul, .post-content ol {
+    margin-bottom: 18px;
+    margin-left: 24px;
+}
+
+.post-content li {
+    margin-bottom: 8px;
+}
+
+.post-content code {
+    background: var(--bg-light);
+    padding: 2px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #c33;
+}
+
+.post-content pre {
+    background: var(--bg-light);
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 20px 0;
+    border-left: 3px solid var(--primary-color);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.post-content blockquote {
+    border-left: 3px solid var(--border-color);
+    padding-left: 20px;
+    margin: 20px 0;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+.post-actions {
+    display: flex;
+    gap: 12px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.post-actions button {
+    padding: 10px 18px;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.post-actions button:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.post-actions .like-button.liked {
+    background: #fff8e8;
+    border-color: #daa;
+    color: #a66;
+}
+
+.comments-section {
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border-color);
+}
+
+.comments-section h3 {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.comment-form {
+    background: var(--bg-light);
+    padding: 30px;
+    margin-bottom: 40px;
+}
+
+.comment-form h4 {
+    margin-bottom: 24px;
+}
+
+.comment-form .form-group {
+    margin-bottom: 18px;
+}
+
+.comment-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    background: white;
+    font-family: 'Georgia', serif;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    background: white;
+    font-family: 'Georgia', serif;
+    min-height: 100px;
+    font-size: 14px;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.comment {
+    background: var(--bg-light);
+    padding: 20px;
+    border-left: 2px solid var(--border-color);
+}
+
+.comment .author {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.comment .date {
+    color: var(--secondary-color);
+    font-size: 12px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.comment .text {
+    color: var(--text-color);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 30px 24px;
+        margin-bottom: 40px;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    header nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .content {
+        padding: 0 24px 40px 24px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .posts-list {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .post-detail h2 {
+        font-size: 24px;
+    }
+
+    .post-content {
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .post-actions {
+        flex-direction: column;
+    }
+
+    .post-actions button {
+        width: 100%;
+    }
+
+    .comment-form {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 20px 16px;
+        margin-bottom: 30px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    header nav {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    header button {
+        width: 100%;
+        padding: 10px 16px;
+    }
+
+    .content {
+        padding: 0 16px 30px 16px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .posts-list {
+        gap: 20px;
+    }
+
+    .post-content {
+        font-size: 13px;
+    }
+}

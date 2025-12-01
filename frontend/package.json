@@ -1,0 +1,12 @@
+{
+  "name": "blog-frontend",
+  "version": "1.0.0",
+  "description": "Blog site frontend",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "dev": "python -m http.server 3000"
+  },
+  "keywords": ["blog", "frontend"],
+  "author": "",
+  "license": "MIT"
+}
