@@ -59,8 +59,27 @@ services:
     environment:
       - API_URL=http://localhost:5000/api
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: blog_jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JENKINS_OPTS=--argumentsRealm.passwd.admin=admin --argumentsRealm.roles.admin=admin
+    networks:
+      - blog_network
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+
 volumes:
   mysql_data:
+  jenkins_home:
 
 networks:
   blog_network:
