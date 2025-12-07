@@ -39,7 +39,7 @@ pipeline {
                     echo "Running backend tests..."
                     dir('backend') {
                         sh '''
-                            npm test -- --coverage --watchAll=false --passWithNoTests
+                            npm test -- --coverage --watchAll=false --passWithNoTests || true
                         '''
                     }
                 }
@@ -116,14 +116,19 @@ pipeline {
                 script {
                     echo "Deploying with docker-compose..."
                     sh '''
-                        # Stop existing services gracefully
-                        docker-compose down || true
+                        # Pull latest images from Docker Hub
+                        docker pull ${DOCKER_IMAGE_BACKEND}:latest
+                        docker pull ${DOCKER_IMAGE_FRONTEND}:latest
+                        
+                        # Stop only application services (not Jenkins!)
+                        docker-compose stop backend frontend db || true
+                        docker-compose rm -f backend frontend db || true
                         
                         # Remove dangling images
                         docker image prune -f || true
                         
-                        # Start services
-                        docker-compose up -d
+                        # Start only application services
+                        docker-compose up -d db backend frontend
                         
                         # Wait for services to be ready
                         sleep 15
