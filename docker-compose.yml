@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: acatia/blog-backend:v1.0.0
+    image: acatia/blog-backend:latest
     container_name: blog_backend
     environment:
       DB_HOST: ${DB_HOST:-db}
@@ -49,7 +49,7 @@ services:
       start_period: 40s
 
   frontend:
-    image: acatia/blog-frontend:v1.0.1
+    image: acatia/blog-frontend:latest
     container_name: blog_frontend
     ports:
       - "3000:3000"
@@ -60,7 +60,9 @@ services:
       - API_URL=${API_URL:-http://localhost:5000/api}
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
     container_name: blog_jenkins
     ports:
       - "8080:8080"
