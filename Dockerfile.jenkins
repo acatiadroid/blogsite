@@ -29,7 +29,8 @@ RUN docker --version && \
     node --version && \
     npm --version
 
-# Give Jenkins user docker permissions
-RUN usermod -aG docker jenkins
+# Create docker group and add jenkins user to it
+RUN groupadd -f docker && \
+    usermod -aG docker jenkins
 
 USER jenkins
