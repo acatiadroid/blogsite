@@ -3,10 +3,10 @@ services:
     image: mariadb:latest
     container_name: blog_db
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: blog_db
-      MYSQL_USER: blog_user
-      MYSQL_PASSWORD: secure_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-blog_db}
+      MYSQL_USER: ${MYSQL_USER:-blog_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -14,7 +14,7 @@ services:
     networks:
       - blog_network
     healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-u", "blog_user", "-psecure_password", "-h", "localhost"]
+      test: ["CMD", "mariadb-admin", "ping", "-u", "${MYSQL_USER:-blog_user}", "-p${MYSQL_PASSWORD}", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,15 +24,15 @@ services:
     build: ./backend
     container_name: blog_backend
     environment:
-      DB_HOST: db
-      DB_USER: blog_user
-      DB_PASSWORD: secure_password
-      DB_NAME: blog_db
-      DB_PORT: 3306
-      JWT_SECRET: your_jwt_secret_key_change_this_in_production
-      JWT_EXPIRE: 7d
-      PORT: 5000
-      NODE_ENV: production
+      DB_HOST: ${DB_HOST:-db}
+      DB_USER: ${DB_USER:-blog_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-blog_db}
+      DB_PORT: ${DB_PORT:-3306}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: ${JWT_EXPIRE:-7d}
+      PORT: ${PORT:-5000}
+      NODE_ENV: ${NODE_ENV:-production}
     ports:
       - "5000:5000"
     depends_on:
@@ -57,7 +57,7 @@ services:
       - blog_network
     restart: unless-stopped
     environment:
-      - API_URL=http://localhost:5000/api
+      - API_URL=${API_URL:-http://localhost:5000/api}
 
   jenkins:
     image: jenkins/jenkins:lts
