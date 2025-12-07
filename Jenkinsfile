@@ -4,8 +4,8 @@ pipeline {
     environment {
         REGISTRY = 'docker.io'
         DOCKER_REGISTRY_CREDENTIALS = 'docker-credentials'
-        DOCKER_IMAGE_BACKEND = 'yourusername/blog-backend'
-        DOCKER_IMAGE_FRONTEND = 'yourusername/blog-frontend'
+        DOCKER_IMAGE_BACKEND = 'acatia/blog-backend'
+        DOCKER_IMAGE_FRONTEND = 'acatia/blog-frontend'
         GIT_COMMIT_SHORT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
         BUILD_VERSION = "${BUILD_NUMBER}-${GIT_COMMIT_SHORT}"
     }
