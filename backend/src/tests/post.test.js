@@ -2,11 +2,12 @@ const request = require('supertest');
 const express = require('express');
 const postController = require('../controllers/postController');
 
-jest.mock('../db', () => ({
+jest.mock('../config/database', () => ({
+  execute: jest.fn(),
   query: jest.fn()
 }));
 
-const db = require('../db');
+const db = require('../config/database');
 
 describe('Post Controller', () => {
   let app;
@@ -25,8 +26,10 @@ describe('Post Controller', () => {
 
   describe('POST /posts', () => {
     it('should create a new post', async () => {
-      db.query.mockResolvedValueOnce([[]]);
-      db.query.mockResolvedValueOnce([[{ insertId: 1 }]]);
+      // Mock: Check user exists
+      db.execute.mockResolvedValueOnce([[{ id: 1, username: 'testuser' }]]);
+      // Mock: Insert post
+      db.execute.mockResolvedValueOnce([{ insertId: 123 }]);
 
       const response = await request(app)
         .post('/posts')
@@ -38,11 +41,12 @@ describe('Post Controller', () => {
         });
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('id', 123);
     });
 
     it('should fail if user does not exist', async () => {
-      db.query.mockResolvedValue([[]]);
+      // Mock: User not found
+      db.execute.mockResolvedValueOnce([[]]);
 
       const response = await request(app)
         .post('/posts')
@@ -60,16 +64,35 @@ describe('Post Controller', () => {
   describe('GET /posts', () => {
     it('should retrieve all posts', async () => {
       const mockPosts = [
-        { id: 1, title: 'Post 1', views: 10, likes: 5, comments: 2 },
-        { id: 2, title: 'Post 2', views: 20, likes: 8, comments: 3 }
+        { 
+          id: 1, 
+          title: 'Post 1',
+          excerpt: 'Excerpt 1',
+          views: 10, 
+          likes: 5, 
+          commentCount: 2,
+          username: 'user1',
+          createdAt: new Date()
+        },
+        { 
+          id: 2, 
+          title: 'Post 2',
+          excerpt: 'Excerpt 2',
+          views: 20, 
+          likes: 8, 
+          commentCount: 3,
+          username: 'user2',
+          createdAt: new Date()
+        }
       ];
       
-      db.query.mockResolvedValue([mockPosts]);
+      db.execute.mockResolvedValueOnce([mockPosts]);
 
       const response = await request(app).get('/posts');
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(2);
     });
   });
 
@@ -79,21 +102,33 @@ describe('Post Controller', () => {
         id: 1,
         title: 'Test Post',
         content: 'Test Content',
-        views: 10
+        excerpt: 'Test excerpt',
+        views: 10,
+        username: 'testuser',
+        createdAt: new Date()
       };
       
-      db.query.mockResolvedValueOnce([[mockPost]]);
-      db.query.mockResolvedValueOnce([[]]); // Update views
-      db.query.mockResolvedValueOnce([[]]);  // Get comments
+      const mockComments = [
+        { id: 1, postId: 1, content: 'Comment 1', username: 'user1', createdAt: new Date() }
+      ];
+      
+      // Mock: Get post
+      db.execute.mockResolvedValueOnce([[mockPost]]);
+      // Mock: Update views
+      db.execute.mockResolvedValueOnce([]);
+      // Mock: Get comments
+      db.execute.mockResolvedValueOnce([mockComments]);
 
       const response = await request(app).get('/posts/1');
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('title');
+      expect(response.body).toHaveProperty('title', 'Test Post');
+      expect(response.body).toHaveProperty('comments');
     });
 
     it('should fail if post does not exist', async () => {
-      db.query.mockResolvedValue([[]]);
+      // Mock: Post not found
+      db.execute.mockResolvedValueOnce([[]]);
 
       const response = await request(app).get('/posts/999');
 
