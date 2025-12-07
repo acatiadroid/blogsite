@@ -60,9 +60,7 @@ services:
       - API_URL=${API_URL:-http://localhost:5000/api}
 
   jenkins:
-    build:
-      context: .
-      dockerfile: Dockerfile.jenkins
+    image: blogsite-jenkins
     container_name: blog_jenkins
     ports:
       - "8080:8080"
