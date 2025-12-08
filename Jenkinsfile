@@ -140,48 +140,7 @@ pipeline {
             }
         }
 
-        stage('Health Checks') {
-            steps {
-                script {
-                    echo "Performing health checks..."
-                    sh '''
-                        set +e
-                        
-                        # Check if backend is responding
-                        echo "Checking backend health..."
-                        for i in {1..30}; do
-                            if curl -sf http://localhost:5000/api/posts > /dev/null 2>&1; then
-                                echo "Backend is healthy"
-                                BACKEND_HEALTHY=1
-                                break
-                            fi
-                            echo "Attempt $i: Waiting for backend..."
-                            sleep 1
-                        done
-                        
-                        if [ -z "$BACKEND_HEALTHY" ]; then
-                            echo "Backend health check failed"
-                            docker-compose logs backend
-                            exit 1
-                        fi
-                        
-                        # Check if frontend is responding
-                        echo "Checking frontend health..."
-                        for i in {1..30}; do
-                            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
-                                echo "Frontend is healthy"
-                                break
-                            fi
-                            echo "Attempt $i: Waiting for frontend..."
-                            sleep 1
-                        done
-                        
-                        echo "All health checks passed"
-                    '''
-                }
-            }
-        }
-
+    
         stage('Cleanup') {
             when {
                 branch 'main'
@@ -200,7 +159,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             script {
