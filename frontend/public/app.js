@@ -188,8 +188,8 @@ class Blog {
                         By <strong>${this.escapeHtml(post.username)}</strong> on ${new Date(post.created_at).toLocaleDateString()}
                     </div>
                     <div class="post-actions">
-                        <button class="like-button" onclick="blog.likePost(${postId})">👍 Like (${post.likes || 0})</button>
-                        <span>👁️ Views: ${post.views}</span>
+                        <button class="like-button" onclick="blog.likePost(${postId})">Like (${post.likes || 0})</button>
+                        <span>Views: ${post.views}</span>
                     </div>
                     ${this.token && currentUser?.username === post.username ? `
                         <div class="post-actions">
@@ -262,9 +262,9 @@ class Blog {
                     <div class="meta">By ${this.escapeHtml(post.username)} on ${new Date(post.created_at).toLocaleDateString()}</div>
                     <div class="excerpt">${this.escapeHtml(post.excerpt)}</div>
                     <div class="stats">
-                        <span>👁️ ${post.views} views</span>
-                        <span>👍 ${post.likes} likes</span>
-                        <span>💬 ${post.comments} comments</span>
+                        <span>${post.views} views</span>
+                        <span>${post.likes} likes</span>
+                        <span>${post.comments} comments</span>
                     </div>
                 </div>
             `).join('');
