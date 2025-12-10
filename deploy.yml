@@ -1,0 +1,113 @@
+---
+- name: Setup Ansible Controller
+  hosts: ansible_controller
+  become: yes
+  tasks:
+    - name: Install Ansible on controller
+      yum:
+        name: 
+          - ansible
+          - python3-pip
+        state: present
+
+    - name: Install Docker Python SDK
+      pip:
+        name: docker
+        state: present
+
+    - name: Install community.docker collection
+      command: ansible-galaxy collection install community.docker --force
+      become_user: ec2-user
+
+- name: Deploy Blog Application to Webservers
+  hosts: webservers
+  become: yes
+  serial: 2  # Deploy to both webservers in parallel
+  vars:
+    docker_image_backend: "acatia/blog-backend:latest"
+    docker_image_frontend: "acatia/blog-frontend:latest"
+    app_dir: "/opt/blogsite"
+  
+  tasks:
+    - name: Update yum cache
+      yum:
+        update_cache: yes
+
+    - name: Install Docker on Amazon Linux
+      yum:
+        name: docker
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: "{{ app_dir }}/docker-compose.yml"
+
+    - name: Copy .env file
+      copy:
+        src: .env
+        dest: "{{ app_dir }}/.env"
+
+    - name: Login to Docker Hub
+      docker_login:
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
+      when: docker_username is defined
+
+    - name: Pull latest Docker images
+      community.docker.docker_image:
+        name: "{{ item }}"
+        source: pull
+        force_source: yes
+      loop:
+        - "{{ docker_image_backend }}"
+        - "{{ docker_image_frontend }}"
+        - "mariadb:latest"
+
+    - name: Stop existing containers
+      shell: |
+        cd {{ app_dir }}
+        docker-compose down || true
+
+    - name: Start services with docker-compose
+      shell: |
+        cd {{ app_dir }}
+        docker-compose up -d db backend frontend
+
+    - name: Wait for backend to be healthy
+      uri:
+        url: "http://localhost:5000/api/posts"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 10
+      delay: 5
+      ignore_errors: yes
+
+    - name: Display deployment status
+      debug:
+        msg: "Deployment completed on {{ inventory_hostname }}"
