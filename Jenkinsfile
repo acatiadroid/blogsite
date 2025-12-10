@@ -80,9 +80,6 @@ pipeline {
         }
 
         stage('Push to Docker Hub') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     echo "Pushing images to Docker Hub..."
@@ -112,9 +109,6 @@ pipeline {
         }
 
         stage('Deploy to EC2 Instances with Ansible') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     echo "Deploying to 3 EC2 instances with Ansible..."
@@ -161,9 +155,6 @@ pipeline {
         }
 
         stage('Cleanup') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     echo "Cleaning up Docker resources..."
