@@ -35,7 +35,7 @@ class Blog {
         root.innerHTML = `
             <div class="container">
                 <header>
-                    <h1>📝 My Blog</h1>
+                    <h1>✨ My Blog</h1>
                     <nav>
                         <button onclick="blog.showPage('home')">Home</button>
                         ${this.token ? `
@@ -99,6 +99,10 @@ class Blog {
 
     renderHome() {
         return `
+            <div class="search-toolbar">
+                <input type="text" id="search-input" placeholder="Search posts by title or content..." />
+                <button onclick="blog.searchPosts()">🔍 Search</button>
+            </div>
             <h2>Latest Posts</h2>
             <div id="posts-container" class="posts-list"></div>
         `;
@@ -241,31 +245,45 @@ class Blog {
         }
     }
 
-    async loadPosts() {
+    async loadPosts(searchTerm = '') {
         try {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '<div class="loading-spinner"></div>';
+            
             const response = await fetch(`${API_URL}/posts`);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const posts = await response.json();
+            let posts = await response.json();
             
-            const container = document.getElementById('posts-container');
+            // Filter posts if search term is provided
+            if (searchTerm) {
+                const lowerSearch = searchTerm.toLowerCase();
+                posts = posts.filter(post => 
+                    post.title.toLowerCase().includes(lowerSearch) ||
+                    post.excerpt.toLowerCase().includes(lowerSearch) ||
+                    post.username.toLowerCase().includes(lowerSearch)
+                );
+            }
+            
             if (!posts || posts.length === 0) {
-                container.innerHTML = '<p>No posts yet.</p>';
+                container.innerHTML = searchTerm 
+                    ? `<p>No posts found matching "${this.escapeHtml(searchTerm)}"</p>`
+                    : '<p>No posts yet.</p>';
                 return;
             }
 
-            container.innerHTML = posts.map(post => `
-                <div class="post-card" onclick="window.location.hash='#post?id=${post.id}'">
+            container.innerHTML = posts.map((post, index) => `
+                <div class="post-card" onclick="window.location.hash='#post?id=${post.id}'" style="animation-delay: ${index * 0.1}s">
                     <h3>${this.escapeHtml(post.title)}</h3>
                     <div class="meta">By ${this.escapeHtml(post.username)} on ${new Date(post.created_at).toLocaleDateString()}</div>
                     <div class="excerpt">${this.escapeHtml(post.excerpt)}</div>
                     <div class="stats">
-                        <span>${post.views} views</span>
-                        <span>${post.likes} likes</span>
-                        <span>${post.comments} comments</span>
+                        <span>👁️ ${post.views}</span>
+                        <span>❤️ ${post.likes}</span>
+                        <span>💬 ${post.comments}</span>
                     </div>
                 </div>
             `).join('');
@@ -273,6 +291,12 @@ class Blog {
             const container = document.getElementById('posts-container');
             container.innerHTML = `<div class="error">Error loading posts: ${error.message}</div>`;
         }
+    }
+    
+    searchPosts() {
+        const searchInput = document.getElementById('search-input');
+        const searchTerm = searchInput ? searchInput.value.trim() : '';
+        this.loadPosts(searchTerm);
     }
 
     async loadMyPosts() {
@@ -440,8 +464,21 @@ class Blog {
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Like failed');
 
-            alert('Post liked!');
-            location.reload();
+            // Reload the post to show updated like count
+            const pageContent = await this.renderPostDetail(postId);
+            document.getElementById('page-content').innerHTML = pageContent;
+            
+            // Show success message briefly
+            const tempMsg = document.createElement('div');
+            tempMsg.className = 'success';
+            tempMsg.textContent = '❤️ Post liked!';
+            tempMsg.style.position = 'fixed';
+            tempMsg.style.top = '20px';
+            tempMsg.style.right = '20px';
+            tempMsg.style.zIndex = '1000';
+            tempMsg.style.animation = 'fadeIn 0.3s ease-out';
+            document.body.appendChild(tempMsg);
+            setTimeout(() => tempMsg.remove(), 2000);
         } catch (error) {
             alert('Error: ' + error.message);
         }
