@@ -14,6 +14,7 @@
       pip:
         name: docker
         state: present
+        extra_args: --ignore-installed
 
     - name: Install community.docker collection
       command: ansible-galaxy collection install community.docker --force
