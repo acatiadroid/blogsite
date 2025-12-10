@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3000/api';
+// Use the current hostname but connect to backend on port 5000
+const API_URL = `http://${window.location.hostname}:5000/api`;
 
 let currentUser = null;
 let currentPage = 'home';
