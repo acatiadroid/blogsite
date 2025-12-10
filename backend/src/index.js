@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost', 'http://127.0.0.1:3000'],
+  origin: true, // Allow all origins in production
   credentials: true
 }));
 app.use(express.json());
